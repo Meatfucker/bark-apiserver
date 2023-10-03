@@ -10,8 +10,12 @@ preload_models()
 barkapi = FastAPI()
 
 @barkapi.get("/txt2wav")
-def txt2wav(inputstring: str):
-    audio_array = generate_audio(inputstring, history_prompt="voices/matlighty.npz")
+def txt2wav(inputstring: str, voicefile: str = None):
+    if voicefile:
+        voicechoice = f'voices/{voicefile}'
+        audio_array = generate_audio(inputstring, history_prompt=voicechoice)
+    else:
+        audio_array = generate_audio(inputstring)
     wav_io = io.BytesIO()
     write_wav(wav_io, SAMPLE_RATE, audio_array)
     wav_io.seek(0)
