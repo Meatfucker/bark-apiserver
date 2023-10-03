@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 import random
 import io
+import os
 
 preload_models()
 barkapi = FastAPI()
@@ -15,6 +16,12 @@ def txt2wav(inputstring: str):
     write_wav(wav_io, SAMPLE_RATE, audio_array)
     wav_io.seek(0)
     return StreamingResponse(wav_io, media_type="audio/wav")
+    
+@barkapi.get("/voices")
+def voices():
+    voices_dir = "voices"
+    voiceslist = [f for f in os.listdir(voices_dir) if f.endswith(".npz")]
+    return {"voices": voiceslist}
 
 if __name__ == "__main__":
     import uvicorn
